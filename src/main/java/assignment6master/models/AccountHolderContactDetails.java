@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "account_holder_contact", catalog = "merit111")
 public class AccountHolderContactDetails {
@@ -24,6 +26,7 @@ public class AccountHolderContactDetails {
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "holder_id", referencedColumnName = "holder_id")
+	@JsonIgnore
 	private AccountHolder accountHolder;
 	
 	public AccountHolderContactDetails() {}

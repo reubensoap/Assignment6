@@ -22,7 +22,7 @@ import assignment6master.repositories.AccountHolderRepo;
 import assignment6master.repositories.CheckingAccountRepo;
 import assignment6master.repositories.SavingsAccountRepo;
 
-@RequestMapping("/AccountHolder/Savings")
+@RequestMapping("/AccountHolder")
 @RestController
 public class SavingsAccountResource {
 
@@ -32,12 +32,12 @@ public class SavingsAccountResource {
 	@Autowired
 	AccountHolderRepo accountHolderRepo;
 	
-	@GetMapping(value = "/all")
+	@GetMapping(value = "/SavingsAccounts")
 	public List<SavingsAccount> getAll(){
 		return savingsAccountRepo.findAll();
 	}
 	
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/{id}/SavingsAccounts")
 	public List<SavingsAccount> getAllById(@PathVariable("id") final long holder_id) throws NoSuchResourceFoundException {
 		if(holder_id > accountHolderRepo.count()) {
 			throw new NoSuchResourceFoundException("Invalid id");
@@ -46,7 +46,7 @@ public class SavingsAccountResource {
 		return accountHolder.getSavingsAccountsList();
 	}
 	
-	@PostMapping(value = "/add/{id}")
+	@PostMapping(value = "/{id}/SavingsAccounts")
 	@ResponseStatus(HttpStatus.CREATED)
 	public SavingsAccount addSavingsAccount(@PathVariable("id") final long holder_id, @RequestBody SavingsAccount savings) throws NoSuchResourceFoundException, ExceedsCombinedBalanceLimitException, NegativeAmountException  {
 		if(holder_id > accountHolderRepo.count()) {
@@ -59,9 +59,8 @@ public class SavingsAccountResource {
 		} else if (savings.getBalance() < 0){
 			throw new NegativeAmountException("Balance below 0");
 		} else {
-			accountHolder.addSavingsToList(savings);
-			savingsAccountRepo.save(savings);
+			savings.setHolder_id(holder_id);
+			return savingsAccountRepo.save(savings);
 		}
-		return savings;
 	}
 }

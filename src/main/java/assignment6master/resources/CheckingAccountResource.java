@@ -21,7 +21,7 @@ import assignment6master.models.NoSuchResourceFoundException;
 import assignment6master.repositories.AccountHolderRepo;
 import assignment6master.repositories.CheckingAccountRepo;
 
-@RequestMapping("/AccountHolder/CheckingAccount")
+@RequestMapping("/AccountHolder")
 @RestController
 public class CheckingAccountResource {
 
@@ -31,12 +31,12 @@ public class CheckingAccountResource {
 	@Autowired
 	AccountHolderRepo accountHolderRepo;
 	
-	@GetMapping(value = "/all")
+	@GetMapping(value = "/CheckingAccounts")
 	public List<CheckingAccount> getAccountHolderContactDetails(){
 		return checkingRepo.findAll();
 	}
 	
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/{id}/CheckingAccounts")
 	public List<CheckingAccount> getAllById(@PathVariable("id") final long holder_id) throws NoSuchResourceFoundException {
 		if(holder_id > accountHolderRepo.count()) {
 			throw new NoSuchResourceFoundException("Invalid id");
@@ -45,7 +45,7 @@ public class CheckingAccountResource {
 		return accountHolder.getCheckingAccountsList();
 	}
 	
-	@PostMapping(value = "/add/{id}")
+	@PostMapping(value = "/{id}/CheckingAccounts")
 	@ResponseStatus(HttpStatus.CREATED)
 	public CheckingAccount addCheckingAccount(@PathVariable("id") final long holder_id, @RequestBody CheckingAccount checking) throws NoSuchResourceFoundException, ExceedsCombinedBalanceLimitException, NegativeAmountException  {
 		if(holder_id > accountHolderRepo.count()) {
@@ -58,9 +58,10 @@ public class CheckingAccountResource {
 		} else if (checking.getBalance() < 0){
 			throw new NegativeAmountException("Balance below 0");
 		} else {
-			accountHolder.addCheckingToList(checking);
-			checkingRepo.save(checking);
+			
+			checking.setHolder_id(holder_id);
+			return checkingRepo.save(checking);
 		}
-		return checking;
+		//return checking;
 	}
 }

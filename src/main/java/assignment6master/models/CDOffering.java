@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "cdOfferings", catalog = "merit111")
 public class CDOffering {
@@ -18,6 +20,10 @@ public class CDOffering {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long offer_id;
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<CDAccount> cdAccount;
 	
 	private int term;
     private double interestRate;
@@ -58,9 +64,17 @@ public class CDOffering {
 
 	public String toString(){
         return "Term: " + this.getTerm() + " Interest Rate: " + this.getInterestRate();
-    }
-    
-    static CDOffering readFromString(String accountData) {
+	}
+
+	public List<CDAccount> getCdAccount() {
+		return cdAccount;
+	}
+
+	public void setCdAccount(List<CDAccount> cdAccount) {
+		this.cdAccount = cdAccount;
+	}
+
+	static CDOffering readFromString(String accountData) {
     	
     	String array1[] = accountData.split(",");
     	int fTerm = Integer.parseInt(array1[0]);

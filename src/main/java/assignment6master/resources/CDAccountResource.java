@@ -24,7 +24,7 @@ import assignment6master.repositories.CDAccountRepo;
 import assignment6master.repositories.CDOfferingRepo;
 
 @RestController
-@RequestMapping(value = "AccountHolder/CDAccount")
+@RequestMapping(value = "AccountHolder")
 public class CDAccountResource {
 	
 	@Autowired
@@ -36,12 +36,12 @@ public class CDAccountResource {
 	@Autowired
 	AccountHolderRepo accountHolderRepo;
 	
-	@GetMapping(value = "/all")
+	@GetMapping(value = "/CDAccounts")
 	public List<CDAccount> getAll(){
 		return cdaccountRepo.findAll();
 	}
 	
-	@GetMapping(value = "/{id}")
+	@GetMapping(value = "/{id}/CDAccounts")
 	public List<CDAccount> getAllById(@PathVariable("id") final long holder_id) throws NoSuchResourceFoundException {
 		if(holder_id > accountHolderRepo.count()) {
 			throw new NoSuchResourceFoundException("Invalid id");
@@ -50,25 +50,13 @@ public class CDAccountResource {
 		return accountHolder.getCdAccountsList();
 	}
 	
-	@GetMapping(value = "/update/{id}/{offering_id}/{amount}")
-	public List<CDAccount> addCDAccount(@PathVariable("id") final long holder_id, @PathVariable("offering_id") final long offering_id, @PathVariable("amount") final double amount){
-		AccountHolder accountHolder = accountHolderRepo.getOne(holder_id);
-		CDOffering offering = cdofferingRepo.getOne(offering_id);
-		CDAccount cdAccount = new CDAccount(offering, amount);
-		cdAccount.setOffering(offering);
-		accountHolder.addCDAccountToList(cdAccount);
-		cdaccountRepo.save(cdAccount);
-		return cdaccountRepo.findAll();
-	}
-	
-	@PostMapping(value = "/add/{id}/{offer_id}")
+	@PostMapping(value = "/{id}/{offer_id}/CDAccounts")
 	@ResponseStatus(HttpStatus.CREATED)
 	public CDAccount addCDAccount(@PathVariable("id") final long holder_id, @PathVariable("offer_id") final long offer_id, @RequestBody CDAccount cdaccount) throws NoSuchResourceFoundException, ExceedsCombinedBalanceLimitException, NegativeAmountException  {
 		if(holder_id > accountHolderRepo.count()) {
 			throw new NoSuchResourceFoundException("Invalid id");
 		}
 		AccountHolder accountHolder = accountHolderRepo.getOne(holder_id);
-		
 		double combinedBalance = accountHolder.getCombinedBalance();
 		if((combinedBalance + cdaccount.getBalance()) > 250000) {
 			throw new ExceedsCombinedBalanceLimitException("Exceeds account limit");
@@ -77,9 +65,8 @@ public class CDAccountResource {
 		} else {
 			CDOffering offering = cdofferingRepo.getOne(offer_id);
 			cdaccount.setOffering(offering);
-			accountHolder.addCDAccountToList(cdaccount);
-			cdaccountRepo.save(cdaccount);
-			return cdaccount;
+			cdaccount.setHolder_id(holder_id);
+			return cdaccountRepo.save(cdaccount);
 		}
 	}
 	

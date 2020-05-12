@@ -17,19 +17,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import assignment6master.models.AccountHolder;
+import assignment6master.models.AccountHolderContactDetails;
 import assignment6master.models.CheckingAccount;
 import assignment6master.models.NoSuchResourceFoundException;
 import assignment6master.repositories.AccountHolderRepo;
 import assignment6master.repositories.CheckingAccountRepo;
 
-@RequestMapping("/AccountHolder")
+@RequestMapping("/AccountHolders")
 @RestController
 public class AccountHolderResource {
 	
 	@Autowired
 	AccountHolderRepo accountHolderRepo;
 	
-	@GetMapping("/all")
+	@GetMapping(value = "/")
 	public List<AccountHolder> getAll() {
 		return accountHolderRepo.findAll();
 	}
@@ -42,9 +43,11 @@ public class AccountHolderResource {
 		return accountHolderRepo.findById(holder_id);
 	}
 	
-	@PostMapping("/add")
+	@PostMapping(value = "/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public AccountHolder add(@RequestBody @Valid AccountHolder account){
+		AccountHolderContactDetails contact = account.getContact();
+		contact.setAccountHolder(account);
 		accountHolderRepo.save(account);
 		return account;
 	}

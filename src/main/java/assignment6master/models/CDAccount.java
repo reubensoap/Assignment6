@@ -25,9 +25,13 @@ public class CDAccount extends BankAccount {
         this.term = 0;
     }
 	
+	public CDAccount(double balance) {
+		super(balance, 0.01);
+	}
+	
     public CDAccount(double balance, double interestRate, int term) {
-    	//super(balance, interestRate);
     	super(balance, interestRate);
+    	this.term = term;
     }
 
     public CDAccount(CDOffering offering, double openingBalance){
@@ -51,6 +55,8 @@ public class CDAccount extends BankAccount {
 
 	public void setOffering(CDOffering offering) {
 		this.offering = offering;
+		this.term = offering.getTerm();
+		this.setInterestRate(offering.getInterestRate());
 	}
 
 	// override from BankAccount withdraw , deposit , futureValue

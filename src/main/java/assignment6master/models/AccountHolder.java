@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
@@ -39,6 +40,9 @@ public class AccountHolder implements Comparable<AccountHolder> {
     //private CheckingAccount checking[] = new CheckingAccount[1];
     //private SavingsAccount savings[] = new SavingsAccount[1];
     //private CDAccount cdAccount[] = new CDAccount[1];
+    
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "accountHolder")
+    private AccountHolderContactDetails contact;
     
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "holder_id", referencedColumnName = "holder_id")
@@ -135,6 +139,16 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		this.cdAccountsList = cdAccountsList;
 	}
 	
+	public AccountHolderContactDetails getContact() {
+		return contact;
+	}
+
+	public void setContact(AccountHolderContactDetails contact) {
+		this.contact = contact;
+	}
+	
+	
+	
 
     // Methods
 
@@ -170,18 +184,6 @@ public class AccountHolder implements Comparable<AccountHolder> {
 		this.cdAccount = cdAccount;
 	}
 	*/
-	
-	public void addCheckingToList(CheckingAccount checking) {
-		this.checkingAccountsList.add(checking);
-	}
-	
-	public void addSavingsToList(SavingsAccount savings) {
-		this.savingsAccountsList.add(savings);
-	}
-	
-	public void addCDAccountToList(CDAccount cdaccount) {
-		this.cdAccountsList.add(cdaccount);
-	}
 
 	/*public CheckingAccount addCheckingAccount(double checkingB) {
     	try {
